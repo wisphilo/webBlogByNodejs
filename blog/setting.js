@@ -1,5 +1,4 @@
 var setting = {
-
 	cookieSecret: 'myblog', 
   	db: 'blog', 
   	host: 'localhost',
