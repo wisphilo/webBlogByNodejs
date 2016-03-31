@@ -8,11 +8,18 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+//mongodb setting
+var setting = require('./setting');
+var flash = require('connect-flash');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(flash());
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -24,6 +31,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+app.use(session({
+  secret: setting.cookieSecret,
+  key: setting.db,//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  store: new MongoStore({
+    url: 'mongodb://localhost/blog'
+    // db: settings.db,
+    // host: settings.host,
+    // port: settings.port
+  })
+}));
+
 app.get('/nswbmw', function (req, res) {
   res.send('hello,world!');
 });
